@@ -21,8 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   List<Map<String, dynamic>> upcomingAppointments = [
-    {"doctor": "Dr. Green", "date": DateTime(2024, 10, 15)},
-    {"doctor": "Dr. Blue", "date": DateTime(2024, 10, 20)},
+    // {"doctor": "Dr. Green", "date": DateTime(2024, 10, 15)},
+    // {"doctor": "Dr. Blue", "date": DateTime(2024, 10, 20)},
   ];
 
   @override

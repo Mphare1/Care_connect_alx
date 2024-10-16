@@ -11,7 +11,7 @@ class _DocProfilesState extends State<DocProfiles> {
   String _selectedSortOption = 'Name';
   TextEditingController _locationController = TextEditingController();
 
-  // Sample doctor data (replace with real data)
+  // Sample doctor data with ratings (replace with real data)
   List<Map<String, dynamic>> doctors = [
     {
       "name": "Dr. John Doe",
@@ -21,6 +21,7 @@ class _DocProfilesState extends State<DocProfiles> {
       "bio": "Expert in diagnostic radiology with 10+ years of experience.",
       "profilePic": null,
       "verified": true,
+      "rating": 4.5, // New field for rating
     },
     {
       "name": "Dr. Jane Smith",
@@ -30,8 +31,43 @@ class _DocProfilesState extends State<DocProfiles> {
       "bio": "Specializes in women's health and radiology.",
       "profilePic": null,
       "verified": false,
+      "rating": 3.0, // New field for rating
     },
   ];
+
+  List<Map<String, dynamic>> sortedDoctors() {
+    List<Map<String, dynamic>> sortedList = List.from(doctors);
+
+    if (_selectedSortOption == 'Name') {
+      sortedList.sort((a, b) => a['name'].compareTo(b['name']));
+    } else if (_selectedSortOption == 'Fees') {
+      sortedList.sort((a, b) =>
+          int.parse(a['fees'].replaceAll(RegExp(r'[^0-9]'), '')) -
+          int.parse(b['fees'].replaceAll(RegExp(r'[^0-9]'), '')));
+    } else if (_selectedSortOption == 'Location') {
+      sortedList.sort((a, b) => a['location'].compareTo(b['location']));
+    }
+
+    return sortedList;
+  }
+
+  // Method to build star rating
+  Widget buildStarRating(double rating) {
+    int fullStars = rating.floor();
+    bool hasHalfStar = rating - fullStars >= 0.5;
+
+    return Row(
+      children: List.generate(5, (index) {
+        if (index < fullStars) {
+          return const Icon(Icons.star, color: Colors.amber);
+        } else if (index == fullStars && hasHalfStar) {
+          return const Icon(Icons.star_half, color: Colors.amber);
+        } else {
+          return const Icon(Icons.star_border, color: Colors.amber);
+        }
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +92,11 @@ class _DocProfilesState extends State<DocProfiles> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                // Refresh the list or perform any needed action
+              });
+            },
             icon: const Icon(Icons.refresh),
           ),
         ],
@@ -93,23 +133,16 @@ class _DocProfilesState extends State<DocProfiles> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Color(0xFF66d9ef), // Soothing Blue Border
-                            width: 2,
-                          ),
+                              color: Color(0xFF66d9ef),
+                              width: 2), // Soothing Blue Border
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Color(0xFF8bc34a), // Connect Green Border
-                            width: 2,
-                          ),
+                              color: Color(0xFF8bc34a),
+                              width: 2), // Connect Green Border
                         ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          // Redraw for suffix icon update
-                        });
-                      },
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -135,13 +168,20 @@ class _DocProfilesState extends State<DocProfiles> {
             // Scrollable list of doctors
             Expanded(
               child: ListView.builder(
-                itemCount: doctors.length,
+                itemCount: sortedDoctors().length,
                 itemBuilder: (context, index) {
-                  final doctor = doctors[index];
+                  final doctor = sortedDoctors()[index];
 
                   return GestureDetector(
                     onTap: () {
-                      // Navigate to detailed doctor profile
+                      // Navigate to detailed doctor profile (implement navigation here)
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DoctorDetailPage(doctor: doctor),
+                        ),
+                      );
                     },
                     child: Card(
                       elevation: 6,
@@ -189,6 +229,9 @@ class _DocProfilesState extends State<DocProfiles> {
                                         fontSize: 14, color: Colors.grey),
                                   ),
                                   const SizedBox(height: 6),
+                                  buildStarRating(
+                                      doctor["rating"]), // Star rating widget
+                                  const SizedBox(height: 10),
                                   Wrap(
                                     spacing: 8.0,
                                     children: doctor["scans"]
@@ -248,7 +291,6 @@ class _DocProfilesState extends State<DocProfiles> {
           ],
         ),
       ),
-
       // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -273,6 +315,34 @@ class _DocProfilesState extends State<DocProfiles> {
             Colors.grey[600], // Softened color for unselected items
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+}
+
+// Example of a Doctor Detail Page
+class DoctorDetailPage extends StatelessWidget {
+  final Map<String, dynamic> doctor;
+
+  const DoctorDetailPage({super.key, required this.doctor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(doctor['name']),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Location: ${doctor['location']}"),
+            Text("Fees: ${doctor['fees']}"),
+            Text("Bio: ${doctor['bio']}"),
+            // Add more details as needed
+          ],
+        ),
       ),
     );
   }
