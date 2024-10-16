@@ -20,7 +20,10 @@ class _HomeScreenState extends State<HomeScreen> {
     "Dr. Brown - Consultation on 2024-08-15",
   ];
 
-  List<Map<String, dynamic>> upcomingAppointments = [];
+  List<Map<String, dynamic>> upcomingAppointments = [
+    {"doctor": "Dr. Green", "date": DateTime(2024, 10, 15)},
+    {"doctor": "Dr. Blue", "date": DateTime(2024, 10, 20)},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color(0xFF4567b7),
-                Color(0xFF66d9ef)
-              ], // Care Blue to Soothing Blue gradient
+              colors: [Color(0xFF4567b7), Color(0xFF66d9ef)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -49,89 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xfff7f7f7), // Soft Gray
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 3,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: TableCalendar(
-                  firstDay: DateTime.utc(2020, 1, 1),
-                  lastDay: DateTime.utc(2030, 12, 31),
-                  focusedDay: _focusedDay,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  },
-                  calendarFormat: _calendarFormat,
-                  onFormatChanged: (format) {
-                    setState(() {
-                      _calendarFormat = format;
-                    });
-                  },
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  calendarStyle: CalendarStyle(
-                    selectedDecoration: BoxDecoration(
-                      color: const Color(0xff8bc34a), // Connect Green
-                      shape: BoxShape.circle,
-                    ),
-                    todayDecoration: BoxDecoration(
-                      color: const Color(0xff66d9ef), // Soothing Blue
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  calendarBuilders: CalendarBuilders(
-                    defaultBuilder: (context, date, events) {
-                      bool isHighlighted = upcomingAppointments.any(
-                          (appointment) =>
-                              isSameDay(date, appointment['date']));
-
-                      bool isWeekend = date.weekday == DateTime.saturday ||
-                          date.weekday == DateTime.sunday;
-
-                      return Container(
-                        alignment: Alignment.center,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Highlighted circle for upcoming appointments
-                            if (isHighlighted)
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(
-                                      0xff66d9ef), // Highlight color
-                                ),
-                              ),
-                            Text(
-                              '${date.day}',
-                              style: TextStyle(
-                                color: isWeekend
-                                    ? Colors.red
-                                    : const Color(
-                                        0xff000000), // Red for weekend digits, Black for others
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+              _buildCalendar(),
               const SizedBox(height: 20),
               _buildAppointmentSection(),
               const SizedBox(height: 20),
@@ -147,54 +65,92 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildCalendar() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xfff7f7f7), // Soft Gray
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 3,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TableCalendar(
+        firstDay: DateTime.utc(2020, 1, 1),
+        lastDay: DateTime.utc(2030, 12, 31),
+        focusedDay: _focusedDay,
+        selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+        onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay;
+          });
+        },
+        calendarFormat: _calendarFormat,
+        onFormatChanged: (format) {
+          setState(() {
+            _calendarFormat = format;
+          });
+        },
+        startingDayOfWeek: StartingDayOfWeek.monday,
+        calendarStyle: CalendarStyle(
+          selectedDecoration: BoxDecoration(
+            color: const Color(0xff8bc34a), // Connect Green
+            shape: BoxShape.circle,
+          ),
+          todayDecoration: BoxDecoration(
+            color: const Color(0xff66d9ef), // Soothing Blue
+            shape: BoxShape.circle,
+          ),
+        ),
+        calendarBuilders: CalendarBuilders(
+          defaultBuilder: (context, date, events) {
+            bool isHighlighted = upcomingAppointments
+                .any((appointment) => isSameDay(date, appointment['date']));
+
+            bool isWeekend = date.weekday == DateTime.saturday ||
+                date.weekday == DateTime.sunday;
+
+            return Container(
+              alignment: Alignment.center,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isHighlighted)
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xff66d9ef), // Highlight color
+                      ),
+                    ),
+                  Text(
+                    '${date.day}',
+                    style: TextStyle(
+                      color: isWeekend
+                          ? Colors.red
+                          : const Color(
+                              0xff000000), // Red for weekend digits, Black for others
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildAppointmentSection() {
     if (upcomingAppointments.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xfff7f7f7), // Soft Gray
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: [
-            Text(
-              "You currently have no upcoming appointments.",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xff000000), // Black
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Schedule your appointment to start managing your health!",
-              style: TextStyle(color: const Color(0xff666666)), // Dark Gray
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DocProfiles(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff8bc34a), // Connect Green
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-              ),
-              child: const Text(
-                "Schedule Appointment",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      );
+      return _buildNoAppointments();
     } else {
       return Column(
         children: [
@@ -204,6 +160,54 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       );
     }
+  }
+
+  Widget _buildNoAppointments() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xfff7f7f7), // Soft Gray
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            "You currently have no upcoming appointments.",
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xff000000), // Black
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            "Schedule your appointment to start managing your health!",
+            style: TextStyle(color: Color(0xff666666)), // Dark Gray
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DocProfiles(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xff8bc34a), // Connect Green
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            ),
+            child: const Text(
+              "Schedule Appointment",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSectionTitle(String title) {
@@ -227,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16),
         child: Text(
           appointment,
-          style: TextStyle(color: const Color(0xff000000)), // Black
+          style: const TextStyle(color: Color(0xff000000)), // Black
         ),
       ),
     );
@@ -248,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
             "1. Remember to follow up on test results.\n"
             "2. Discuss medication changes during next visit.\n"
             "3. Schedule next appointment for 2024-11-10.",
-            style: TextStyle(color: const Color(0xff000000)), // Black
+            style: const TextStyle(color: Color(0xff000000)), // Black
           ),
         ],
       ),
