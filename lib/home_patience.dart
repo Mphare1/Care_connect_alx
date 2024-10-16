@@ -51,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               _buildCalendar(),
               const SizedBox(height: 20),
+              _buildSearchBar(),
+              const SizedBox(height: 20),
               _buildAppointmentSection(),
               const SizedBox(height: 20),
               _buildSectionTitle("Previous Appointments"),
@@ -142,6 +144,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return TextField(
+      decoration: InputDecoration(
+        hintText: "Search appointments...",
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.grey),
+        ),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            // Implement search functionality
           },
         ),
       ),
