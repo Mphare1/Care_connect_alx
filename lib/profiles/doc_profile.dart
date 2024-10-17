@@ -1,3 +1,5 @@
+import 'package:care_connect/home_patience.dart';
+import 'package:care_connect/messages_screen.dart';
 import 'package:flutter/material.dart';
 
 class DocProfiles extends StatefulWidget {
@@ -308,7 +310,32 @@ class _DocProfilesState extends State<DocProfiles> {
           ),
         ],
         onTap: (index) {
-          // Handle navigation
+          switch (index) {
+            case 0:
+              // Navigate to Home screen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+              break;
+            case 1:
+              // Navigate to Messages screen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const MessagingScreen()),
+              );
+              break;
+            case 2:
+              // Navigate to Profile screen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
+              );
+              break;
+            default:
+              break;
+          }
         },
         selectedItemColor: const Color(0xFF8bc34a), // Connect Green
         unselectedItemColor:
@@ -316,6 +343,28 @@ class _DocProfilesState extends State<DocProfiles> {
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
       ),
+    );
+  }
+}
+
+// Example HomeScreen, MessagesScreen, and ProfileScreen
+
+class MessagesScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Messages')),
+      body: Center(child: Text('Messages Screen')),
+    );
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Profile')),
+      body: Center(child: Text('Profile Screen')),
     );
   }
 }

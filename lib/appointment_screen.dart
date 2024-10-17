@@ -116,8 +116,8 @@ class AppointmentScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.schedule,
-                color: const Color(0xff8bc34a)), // Connect Green
+            const Icon(Icons.schedule,
+                color: Color(0xff8bc34a)), // Connect Green
             const SizedBox(width: 10),
             Text(
               "Your next appointment is in $difference days",
