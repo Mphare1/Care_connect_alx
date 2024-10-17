@@ -45,6 +45,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -52,19 +53,21 @@ class _MessagingScreenState extends State<MessagingScreen> {
               colors: [
                 Color(0xFF4567b7),
                 Color(0xFF66d9ef)
-              ], // Care Blue to Soothing Blue gradient
+              ], // Care Blue to Soothing Blue
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
-        title: const Text("Messages",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Messages",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: Row(
         children: [
-          // Conversation List
+          // Conversation List on the left
           Expanded(
             flex: 2,
             child: Container(
@@ -76,17 +79,33 @@ class _MessagingScreenState extends State<MessagingScreen> {
 
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: const Color(0xFF4567b7),
-                      child: conversation["profilePic"] == null
-                          ? const Icon(Icons.person, color: Colors.white)
-                          : null,
+                      backgroundColor: Colors.grey.shade300,
+                      child: const Icon(Icons.person, color: Colors.white),
                     ),
                     title: Text(
                       conversation["name"],
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(conversation["lastMessage"]),
-                    trailing: Text(conversation["time"]),
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(conversation["time"],
+                            style: TextStyle(color: Colors.grey)),
+                        const SizedBox(height: 5),
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.blueAccent,
+                          ),
+                          child: const Text(
+                            "2",
+                            style: TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
                     onTap: () {
                       // Handle switching to the message thread
                     },
@@ -96,7 +115,7 @@ class _MessagingScreenState extends State<MessagingScreen> {
             ),
           ),
 
-          // Message Thread
+          // Message Thread on the right
           Expanded(
             flex: 3,
             child: Column(
@@ -106,47 +125,40 @@ class _MessagingScreenState extends State<MessagingScreen> {
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
+                      final isMe = message['isMe'];
+
                       return Align(
-                        alignment: message['isMe']
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
+                        alignment:
+                            isMe ? Alignment.centerRight : Alignment.centerLeft,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
                           margin: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 10),
+                          padding: const EdgeInsets.all(15),
                           decoration: BoxDecoration(
-                            color: message['isMe']
-                                ? const Color(0xFF4567b7)
-                                : Colors.grey[200],
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
+                            color: isMe ? Colors.blueAccent : Colors.grey[300],
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(isMe ? 15 : 0),
+                              topRight: Radius.circular(isMe ? 0 : 15),
+                              bottomLeft: const Radius.circular(15),
+                              bottomRight: const Radius.circular(15),
+                            ),
                           ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: isMe
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
                             children: [
                               Text(
                                 message['message'],
                                 style: TextStyle(
-                                  color: message['isMe']
-                                      ? Colors.white
-                                      : Colors.black87,
-                                  fontSize: 16,
+                                  color: isMe ? Colors.white : Colors.black87,
                                 ),
                               ),
                               const SizedBox(height: 5),
                               Text(
                                 message['time'],
                                 style: TextStyle(
-                                  color: message['isMe']
-                                      ? Colors.white70
-                                      : Colors.black54,
+                                  color: isMe ? Colors.white70 : Colors.black54,
                                   fontSize: 10,
                                 ),
                               ),
@@ -158,9 +170,11 @@ class _MessagingScreenState extends State<MessagingScreen> {
                   ),
                 ),
 
-                // Message input
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
+                // Message Input
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  color: Colors.white,
                   child: Row(
                     children: [
                       Expanded(
@@ -169,19 +183,21 @@ class _MessagingScreenState extends State<MessagingScreen> {
                           decoration: InputDecoration(
                             hintText: "Type your message...",
                             filled: true,
-                            fillColor: const Color(0xFFF7F7F7),
+                            fillColor: Colors.grey[100],
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide.none,
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       CircleAvatar(
-                        backgroundColor: const Color(0xFF66d9ef),
+                        backgroundColor: Colors.blueAccent,
                         child: IconButton(
                           icon: const Icon(Icons.send, color: Colors.white),
                           onPressed: () {
