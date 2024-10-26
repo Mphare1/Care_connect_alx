@@ -17,6 +17,7 @@ class _CareConnectState extends State<CareConnect> {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     );
   }
