@@ -1,5 +1,10 @@
+import 'package:care_connect/doctor/doc_availbility.dart';
+import 'package:care_connect/doctor/home_doc.dart';
 import 'package:care_connect/home_patience.dart';
+import 'package:care_connect/landing_screen.dart';
+import 'package:care_connect/loginform.dart';
 import 'package:care_connect/profiles/doc_profile.dart';
+import 'package:care_connect/registration.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,9 +21,9 @@ class CareConnect extends StatefulWidget {
 class _CareConnectState extends State<CareConnect> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: WelcomeScreen(),
     );
   }
 }

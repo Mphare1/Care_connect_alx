@@ -313,22 +313,21 @@ class _DocProfilesState extends State<DocProfiles> {
           switch (index) {
             case 0:
               // Navigate to Home screen
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
               break;
             case 1:
               // Navigate to Messages screen
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const MessagingScreen()),
+                MaterialPageRoute(builder: (context) => MessagesScreen()),
               );
               break;
             case 2:
               // Navigate to Profile screen
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ProfileScreen()),
               );
@@ -348,16 +347,6 @@ class _DocProfilesState extends State<DocProfiles> {
 }
 
 // Example HomeScreen, MessagesScreen, and ProfileScreen
-
-class MessagesScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Messages')),
-      body: Center(child: Text('Messages Screen')),
-    );
-  }
-}
 
 class ProfileScreen extends StatelessWidget {
   @override
