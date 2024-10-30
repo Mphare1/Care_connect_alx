@@ -7,6 +7,10 @@ dotenv.config();
 
 const app = express();
 
+// Import routes
+const userRoutes = require('./routes/users');
+const appointmentRoutes = require('./routes/appointments');
+
 // Middleware to parse JSON
 app.use(express.json());
 
@@ -22,6 +26,12 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get('/', (req, res) => {
     res.send("Welcome to the Care Connect API");
 });
+
+// Use routes
+app.use('/users', userRoutes);
+app.use('/appointments', appointmentRoutes);
+app.use('/messages', messageRoutes);
+app.use('/reviews', reviewRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
